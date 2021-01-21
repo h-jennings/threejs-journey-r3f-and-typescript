@@ -1,42 +1,31 @@
 import React from 'react';
 import { Canvas } from 'react-three-fiber';
-import { Mesh } from 'three';
 import { OrbitControls } from 'drei';
 
-interface CubeProps {
-  color: number | string;
-}
-const Cube: React.FC<CubeProps> = ({ color }) => {
-  const mesh = React.useRef<Mesh>();
+const CustomBufferGeometry: React.FC = () => {
+  const count = 100;
+  const positionsArray = React.useMemo(() => {
+    return new Float32Array(count * 3 * 3).map(() => (Math.random() - 0.5) * 4);
+  }, [count]);
   return (
-    <mesh position={[0, 0, 0]} ref={mesh}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshBasicMaterial color={color} />
+    <mesh position={[0, 0, 0]}>
+      <bufferGeometry attach='geometry'>
+        <bufferAttribute
+          attachObject={['attributes', 'position']}
+          count={positionsArray.length / 3}
+          array={positionsArray}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <meshBasicMaterial color={0xff0000} wireframe />
     </mesh>
   );
 };
 
 const App: React.FC = () => {
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  React.useEffect(() => {
-    if (canvasRef.current && document) {
-      if (isFullscreen) {
-        canvasRef.current?.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) {
-          document?.exitFullscreen();
-        }
-      }
-    }
-  }, [isFullscreen]);
   return (
     <Canvas
-      onDoubleClick={() => setIsFullscreen(!isFullscreen)}
       colorManagement
-      onCreated={(state) => {
-        canvasRef.current = state.gl.domElement;
-      }}
       camera={{
         position: [0, 0, 3],
         fov: 75,
@@ -44,7 +33,7 @@ const App: React.FC = () => {
       pixelRatio={Math.min(window.devicePixelRatio, 2)}>
       <color attach='background' args={[0, 0, 0]} />
       <OrbitControls />
-      <Cube color={0xff0000} />
+      <CustomBufferGeometry />
     </Canvas>
   );
 };

@@ -2,8 +2,8 @@ import React from 'react';
 import { Canvas } from 'react-three-fiber';
 import { Mesh } from 'three';
 import { OrbitControls } from 'drei';
-import { withControls, Controls, useControl } from 'react-three-gui';
 import { a, useSpring } from '@react-spring/three';
+import { useTweaks, makeButton, makeSeparator } from 'use-tweaks';
 
 interface CubeProps {
   color: number | string;
@@ -13,37 +13,22 @@ const Cube: React.FC<CubeProps> = ({ color }) => {
   const [rotationY, setRotationY] = React.useState(0);
   const CUBE_GROUP = 'Cube';
 
-  const positionX = useControl('X', {
-    group: CUBE_GROUP,
-    min: -3,
-    max: 3,
-    type: 'number',
-    spring: true,
-  });
-
-  const positionY = useControl('Y', {
-    type: 'number',
-    group: CUBE_GROUP,
-    min: -3,
-    max: 3,
-    spring: true,
-  });
-
-  useControl('Spin cube', {
-    group: CUBE_GROUP,
-    type: 'button',
-    onClick: () => setRotationY((y) => y + Math.PI * 2),
-  });
-
-  const wireframe = useControl('Wireframe', {
-    group: CUBE_GROUP,
-    type: 'boolean',
-  });
-
-  const visible = useControl('Visible', {
-    group: CUBE_GROUP,
-    type: 'boolean',
-    value: true,
+  const { x, y, wireframe, visibility, color: c } = useTweaks(CUBE_GROUP, {
+    x: {
+      value: 0,
+      min: -3,
+      max: 3,
+    },
+    y: {
+      value: 0,
+      min: -3,
+      max: 3,
+    },
+    color: '#ff0000',
+    wireframe: false,
+    visibility: true,
+    ...makeSeparator(),
+    ...makeButton('Spin', () => setRotationY((y) => y + Math.PI * 2)),
   });
 
   const { rotation } = useSpring({
@@ -54,38 +39,30 @@ const Cube: React.FC<CubeProps> = ({ color }) => {
   });
 
   return (
-    <a.mesh
-      position-x={positionX}
-      position-y={positionY}
-      rotation-y={rotation}
-      ref={mesh}>
+    <a.mesh position-x={x} position-y={y} rotation-y={rotation} ref={mesh}>
       <boxGeometry args={[1, 1, 1]} />
       <a.meshBasicMaterial
         wireframe={wireframe}
-        visible={visible}
+        visible={visibility}
         attach='material'
-        color={color}
+        color={c}
       />
     </a.mesh>
   );
 };
 
 const App: React.FC = () => {
-  const AppCanvas = withControls(Canvas);
   return (
-    <Controls.Provider>
-      <AppCanvas
-        camera={{
-          position: [0, 0, 3],
-          fov: 75,
-        }}
-        pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-        <color attach='background' args={[0, 0, 0]} />
-        <OrbitControls />
-        <Cube color={0xff0000} />
-      </AppCanvas>
-      <Controls title='Control panel' />
-    </Controls.Provider>
+    <Canvas
+      camera={{
+        position: [0, 0, 3],
+        fov: 75,
+      }}
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
+      <color attach='background' args={[0, 0, 0]} />
+      <OrbitControls />
+      <Cube color={0xff0000} />
+    </Canvas>
   );
 };
 

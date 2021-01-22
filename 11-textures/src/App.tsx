@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Canvas, useLoader } from 'react-three-fiber';
+import { Canvas } from 'react-three-fiber';
 import { Mesh, TextureLoader, NearestFilter } from 'three';
 import { OrbitControls } from 'drei';
 import { a, useSpring } from '@react-spring/three';
@@ -9,25 +9,6 @@ const Cube: React.FC = () => {
   const mesh = React.useRef<Mesh>();
   const [rotationY, setRotationY] = React.useState(0);
   const CUBE_GROUP = 'Cube';
-
-  // const tx = React.useRef(() => {
-  //   const loader = new TextureLoader();
-  //   const t = loader.load('/textures/minecraft.png');
-  //   t.generateMipmaps = false;
-  //   t.minFilter = NearestFilter;
-  //   t.magFilter = NearestFilter;
-
-  //   console.log('created');
-  //   return t;
-  // });
-
-  // const t = useLoader(TextureLoader, '/textures/minecraft.png');
-  // const texture = React.useMemo(() => {
-  //   t.generateMipmaps = false;
-  //   t.minFilter = NearestFilter;
-  //   t.magFilter = NearestFilter;
-  //   return t;
-  // }, [t]);
 
   const [texture] = React.useState(() => {
     const loader = new TextureLoader();
@@ -53,7 +34,6 @@ const Cube: React.FC = () => {
   return (
     <a.mesh rotation-y={rotation} ref={mesh}>
       <boxGeometry args={[1, 1, 1]} />
-      {/* <a.meshBasicMaterial attach='material' map={texture1.current()} /> */}
       <a.meshBasicMaterial attach='material' map={texture} />
     </a.mesh>
   );

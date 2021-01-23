@@ -6,7 +6,7 @@ import { useTweaks } from 'use-tweaks';
 
 const SharedMaterial = React.forwardRef<MeshStandardMaterial>((_props, ref) => {
   // * `useCubeTexture` would be preferred but has a bug at time of writing
-  // const envMapTexture = useCubeTexture(
+  // const envMap = useCubeTexture(
   //   ['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
   //   { path: '/textures/environmentMaps/3/' },
   // );

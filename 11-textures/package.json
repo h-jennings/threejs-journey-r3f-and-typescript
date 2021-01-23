@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-spring/three": "^9.0.0-rc.3",
+    "@react-three/drei": "^2.2.19",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.0",

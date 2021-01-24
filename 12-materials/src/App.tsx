@@ -1,48 +1,8 @@
 import React, { Suspense } from 'react';
 import { Canvas, useResource, useFrame } from 'react-three-fiber';
-import { Mesh, CubeTextureLoader, MeshStandardMaterial, Vector3 } from 'three';
-import { OrbitControls } from '@react-three/drei';
+import { Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { OrbitControls, useCubeTexture } from '@react-three/drei';
 import { useTweaks } from 'use-tweaks';
-
-const SharedMaterial = React.forwardRef<MeshStandardMaterial>((_props, ref) => {
-  // * `useCubeTexture` would be preferred but has a bug at time of writing
-  // const envMap = useCubeTexture(
-  //   ['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
-  //   { path: '/textures/environmentMaps/3/' },
-  // );
-  const [envMap] = React.useState(() => {
-    const loader = new CubeTextureLoader();
-    const envMap = loader.load([
-      '/textures/environmentMaps/3/px.jpg',
-      '/textures/environmentMaps/3/nx.jpg',
-      '/textures/environmentMaps/3/py.jpg',
-      '/textures/environmentMaps/3/ny.jpg',
-      '/textures/environmentMaps/3/pz.jpg',
-      '/textures/environmentMaps/3/nz.jpg',
-    ]);
-    return envMap;
-  });
-  const { metalness, roughness } = useTweaks('Material', {
-    metalness: {
-      value: 0.7,
-      min: 0,
-      max: 1,
-    },
-    roughness: {
-      value: 0.2,
-      min: 0,
-      max: 1,
-    },
-  });
-  return (
-    <meshStandardMaterial
-      ref={ref}
-      metalness={metalness}
-      roughness={roughness}
-      envMap={envMap}
-    />
-  );
-});
 
 interface SharedMeshProps {
   material: MeshStandardMaterial;
@@ -81,11 +41,32 @@ const Torus: React.FC = () => {
 
 const Shapes: React.FC = () => {
   const material = useResource<MeshStandardMaterial>();
+  const envMap = useCubeTexture(
+    ['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
+    { path: '/textures/environmentMaps/3/' },
+  );
+  const { metalness, roughness } = useTweaks('Material', {
+    metalness: {
+      value: 0.7,
+      min: 0,
+      max: 1,
+    },
+    roughness: {
+      value: 0.2,
+      min: 0,
+      max: 1,
+    },
+  });
   return (
     <mesh>
-      <SharedMaterial ref={material} />
+      <meshStandardMaterial
+        ref={material}
+        metalness={metalness}
+        roughness={roughness}
+        envMap={envMap}
+      />
       {material.current ? (
-        <>
+        <group>
           <SharedMesh material={material.current} position={[-1.5, 0, 0]}>
             <Sphere />
           </SharedMesh>
@@ -95,7 +76,7 @@ const Shapes: React.FC = () => {
           <SharedMesh material={material.current} position={[1.5, 0, 0]}>
             <Torus />
           </SharedMesh>
-        </>
+        </group>
       ) : null}
     </mesh>
   );

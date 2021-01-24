@@ -2,20 +2,13 @@ import React, { Suspense } from 'react';
 import { Canvas, useResource, useUpdate, useLoader } from 'react-three-fiber';
 import {
   FontLoader,
+  MeshMatcapMaterial,
   MeshStandardMaterial,
   TextBufferGeometry,
   TextureLoader,
   TorusBufferGeometry,
 } from 'three';
 import { OrbitControls } from '@react-three/drei';
-
-const SharedMaterial = React.forwardRef<MeshStandardMaterial>((_props, ref) => {
-  const [texture] = React.useState(() => {
-    const loader = new TextureLoader();
-    return loader.load('/textures/matcaps/8.png');
-  });
-  return <meshMatcapMaterial matcap={texture} ref={ref} />;
-});
 
 interface TextProps {
   material: any;
@@ -51,57 +44,44 @@ const Text: React.FC<TextProps> = ({ children, material }) => {
 interface DonutsProps {
   material: MeshStandardMaterial;
 }
+const torus = new TorusBufferGeometry(0.3, 0.2, 20, 45);
 const Donuts: React.FC<DonutsProps> = ({ material }) => {
-  const geometry = useResource<TorusBufferGeometry>();
-  const [torus] = React.useState(() => {
-    return new TorusBufferGeometry(0.3, 0.2, 20, 45);
-  });
-  React.useEffect(() => {
-    geometry.current = torus;
-  }, [geometry, torus]);
   return (
     <>
-      {geometry.current ? (
-        <>
-          {Array(500)
-            .fill(null)
-            .map((_, idx) => {
-              const scale = Math.random();
-              return (
-                <mesh
-                  position={[
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                  ]}
-                  rotation={[
-                    Math.random() * Math.PI,
-                    Math.random() * Math.PI,
-                    0,
-                  ]}
-                  scale={[scale, scale, scale]}
-                  key={idx}
-                  geometry={geometry.current}
-                  material={material}
-                />
-              );
-            })}
-        </>
-      ) : null}
+      {Array(500)
+        .fill(null)
+        .map((_, idx) => {
+          const scale = Math.random();
+          return (
+            <mesh
+              position={[
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+              ]}
+              rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
+              scale={[scale, scale, scale]}
+              key={idx}
+              geometry={torus}
+              material={material}
+            />
+          );
+        })}
     </>
   );
 };
 
 const Objects: React.FC = () => {
   const material = useResource<MeshStandardMaterial>();
+  const matcap = useLoader(TextureLoader, '/textures/matcaps/8.png');
   return (
     <mesh>
-      <SharedMaterial ref={material} />
+      <meshMatcapMaterial ref={material} matcap={matcap} />
       {material.current ? (
-        <>
+        <group>
           <Text material={material.current}>Ayo!</Text>
           <Donuts material={material.current} />
-        </>
+        </group>
       ) : null}
     </mesh>
   );

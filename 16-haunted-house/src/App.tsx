@@ -1,8 +1,14 @@
 import React, { Suspense } from 'react';
-import { Canvas, useResource } from 'react-three-fiber';
+import { Canvas, useResource, useUpdate } from 'react-three-fiber';
 import * as THREE from 'three';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useTexture } from '@react-three/drei';
 import { Floor } from './components/Floor';
+import { BoxBufferGeometry, MeshStandardMaterial } from 'three';
+import { Walls } from './components/Walls';
+import { Roof } from './components/Roof';
+import { Door } from './components/Door';
+import { Bushes } from './components/Bushes';
+import { Graves } from './components/Graves';
 
 const Lights: React.FC = () => {
   // * Refs
@@ -43,29 +49,22 @@ const Lights: React.FC = () => {
 const House: React.FC = () => {
   return (
     <group>
-      <Floor />
+      <Roof />
+      <Walls />
+      <Door />
+      <Bushes />
     </group>
   );
 };
 
-const Walls: React.FC = () => {
-  return null;
-};
-
-const Roof: React.FC = () => {
-  return null;
-};
-
-const Door: React.FC = () => {
-  return null;
-};
-
-const Bushes: React.FC = () => {
-  return null;
-};
-
-const Graves: React.FC = () => {
-  return null;
+const Objects: React.FC = () => {
+  return (
+    <>
+      <House />
+      <Floor />
+      <Graves />
+    </>
+  );
 };
 
 const App: React.FC = () => {
@@ -82,11 +81,12 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
       <OrbitControls />
       <Lights />
       <Suspense fallback={null}>
-        <House />
+        <Objects />
       </Suspense>
     </Canvas>
   );

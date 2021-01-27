@@ -31,3 +31,6 @@ yarn-error.log*
 **/.vscode/**
 **/.eslintcache
 .eslintcache
+
+.prettierrc
+**/.prettierrc/**

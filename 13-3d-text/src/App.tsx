@@ -1,8 +1,13 @@
 import React, { Suspense } from 'react';
-import { Canvas, useResource, useUpdate, useLoader } from 'react-three-fiber';
+import {
+  Canvas,
+  useResource,
+  useUpdate,
+  useLoader,
+  MeshProps,
+} from 'react-three-fiber';
 import {
   FontLoader,
-  MeshMatcapMaterial,
   MeshStandardMaterial,
   TextBufferGeometry,
   TextureLoader,
@@ -10,10 +15,10 @@ import {
 } from 'three';
 import { OrbitControls } from '@react-three/drei';
 
-interface TextProps {
-  material: any;
-}
-const Text: React.FC<TextProps> = ({ children, material }) => {
+const Text: React.FC<Pick<MeshProps, 'material'>> = ({
+  children,
+  material,
+}) => {
   const font = useLoader(FontLoader, '/fonts/helvetiker_regular.typeface.json');
   const config = React.useMemo(
     () => ({
@@ -27,13 +32,13 @@ const Text: React.FC<TextProps> = ({ children, material }) => {
       bevelOffset: 0,
       bevelSegments: 5,
     }),
-    [font],
+    [font]
   );
   const geometry = useUpdate<TextBufferGeometry>(
     (self) => {
       self?.center();
     },
-    [children],
+    [children]
   );
   return (
     <mesh material={material}>
@@ -97,8 +102,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Suspense fallback={null}>
         <Objects />

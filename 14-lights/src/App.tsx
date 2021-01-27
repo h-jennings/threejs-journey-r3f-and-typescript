@@ -10,10 +10,7 @@ import {
 import * as THREE from 'three';
 import { OrbitControls } from '@react-three/drei';
 
-interface SharedMeshProps {
-  material: THREE.Material;
-}
-const MeshWithRotation: React.FC<MeshProps & SharedMeshProps> = (props) => {
+const MeshWithRotation: React.FC<MeshProps> = (props) => {
   const { material } = props;
   const ref = React.useRef<THREE.Mesh>();
   useFrame((_, delta) => {
@@ -45,7 +42,8 @@ const Objects: React.FC = () => {
           <mesh
             material={material.current}
             position={[0, -0.65, 0]}
-            rotation={[-Math.PI * 0.5, 0, 0]}>
+            rotation={[-Math.PI * 0.5, 0, 0]}
+          >
             <planeBufferGeometry args={[5, 5]} />
           </mesh>
         </group>
@@ -121,8 +119,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Lights />
       <Suspense fallback={null}>

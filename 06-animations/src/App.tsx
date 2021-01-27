@@ -1,6 +1,5 @@
 import React from 'react';
-import { Canvas } from 'react-three-fiber';
-import { Mesh } from 'three';
+import { Canvas, MeshBasicMaterialProps } from 'react-three-fiber';
 import { a, useSpring } from '@react-spring/three';
 
 const sizes = {
@@ -8,12 +7,7 @@ const sizes = {
   height: 600,
 };
 
-interface CubeProps {
-  color: number | string;
-  posX?: number;
-}
-const Cube: React.FC<CubeProps> = ({ color }) => {
-  const mesh = React.useRef<Mesh>();
+const Cube: React.FC<Pick<MeshBasicMaterialProps, 'color'>> = ({ color }) => {
   const { position } = useSpring({
     loop: {
       reverse: true,
@@ -28,7 +22,7 @@ const Cube: React.FC<CubeProps> = ({ color }) => {
 
   return (
     //@ts-ignore - Vector3 type isn't supported by @react-spring/three yet...
-    <a.mesh position={position} ref={mesh}>
+    <a.mesh position={position}>
       <boxGeometry args={[1, 1, 1]} />
       <meshBasicMaterial color={color} />
     </a.mesh>
@@ -44,7 +38,8 @@ const App: React.FC = () => {
         position: [0, 0, 3],
         fov: 75,
         aspect: sizes.width / sizes.height,
-      }}>
+      }}
+    >
       <Cube color={0xff0000} />
     </Canvas>
   );

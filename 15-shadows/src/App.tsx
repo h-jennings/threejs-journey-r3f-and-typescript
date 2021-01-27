@@ -9,11 +9,7 @@ import {
 import * as THREE from 'three';
 import { OrbitControls, useTexture } from '@react-three/drei';
 
-interface SharedMeshProps {
-  material: THREE.Material;
-}
-
-const Sphere: React.FC<MeshProps & SharedMeshProps> = (props) => {
+const Sphere: React.FC<MeshProps> = (props) => {
   const simpleShadow = useTexture('/textures/simpleShadow.jpg');
   const sphereRef = useResource<THREE.Mesh>();
   const sphereShadowRef = useResource<THREE.Mesh>();
@@ -46,7 +42,8 @@ const Sphere: React.FC<MeshProps & SharedMeshProps> = (props) => {
       <mesh
         ref={sphereShadowRef}
         rotation={[-Math.PI * 0.5, 0, 0]}
-        position={[0, planePositionY + 0.01, 0]}>
+        position={[0, planePositionY + 0.01, 0]}
+      >
         <planeBufferGeometry args={[1.5, 1.5]} />
         <meshBasicMaterial
           ref={sphereShadowMaterialRef}
@@ -73,7 +70,8 @@ const Objects: React.FC = () => {
             receiveShadow
             material={material.current}
             position={[0, planePositionY, 0]}
-            rotation={[-Math.PI * 0.5, 0, 0]}>
+            rotation={[-Math.PI * 0.5, 0, 0]}
+          >
             <planeBufferGeometry args={[5, 5]} />
           </mesh>
         </group>
@@ -182,8 +180,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Lights />
       <Suspense fallback={null}>

@@ -1,21 +1,20 @@
 import React, { Suspense } from 'react';
 import { Canvas } from 'react-three-fiber';
-import { Mesh, TextureLoader, NearestFilter } from 'three';
+import * as THREE from 'three';
 import { OrbitControls } from 'drei';
 import { a, useSpring } from '@react-spring/three';
 import { useTweaks, makeButton } from 'use-tweaks';
 
 const Cube: React.FC = () => {
-  const mesh = React.useRef<Mesh>();
   const [rotationY, setRotationY] = React.useState(0);
   const CUBE_GROUP = 'Cube';
 
   const [texture] = React.useState(() => {
-    const loader = new TextureLoader();
+    const loader = new THREE.TextureLoader();
     const t = loader.load('/textures/minecraft.png');
     t.generateMipmaps = false;
-    t.minFilter = NearestFilter;
-    t.magFilter = NearestFilter;
+    t.minFilter = THREE.NearestFilter;
+    t.magFilter = THREE.NearestFilter;
 
     return t;
   });
@@ -32,9 +31,9 @@ const Cube: React.FC = () => {
   });
 
   return (
-    <a.mesh rotation-y={rotation} ref={mesh}>
+    <a.mesh rotation-y={rotation}>
       <boxGeometry args={[1, 1, 1]} />
-      <a.meshBasicMaterial attach='material' map={texture} />
+      <a.meshBasicMaterial attach="material" map={texture} />
     </a.mesh>
   );
 };
@@ -49,8 +48,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Suspense fallback={null}>
         <Cube />

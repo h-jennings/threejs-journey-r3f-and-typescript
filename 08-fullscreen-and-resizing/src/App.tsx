@@ -1,15 +1,10 @@
 import React from 'react';
-import { Canvas } from 'react-three-fiber';
-import { Mesh } from 'three';
+import { Canvas, MeshBasicMaterialProps } from 'react-three-fiber';
 import { OrbitControls } from 'drei';
 
-interface CubeProps {
-  color: number | string;
-}
-const Cube: React.FC<CubeProps> = ({ color }) => {
-  const mesh = React.useRef<Mesh>();
+const Cube: React.FC<Pick<MeshBasicMaterialProps, 'color'>> = ({ color }) => {
   return (
-    <mesh position={[0, 0, 0]} ref={mesh}>
+    <mesh position={[0, 0, 0]}>
       <boxGeometry args={[1, 1, 1]} />
       <meshBasicMaterial color={color} />
     </mesh>
@@ -41,8 +36,9 @@ const App: React.FC = () => {
         position: [0, 0, 3],
         fov: 75,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Cube color={0xff0000} />
     </Canvas>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Canvas } from 'react-three-fiber';
-import { Mesh } from 'three';
+import { Canvas, MeshBasicMaterialProps } from 'react-three-fiber';
 
 const sizes = {
   width: 800,
@@ -8,27 +7,23 @@ const sizes = {
 };
 
 interface CubeProps {
-  color: number | string;
   posX: number;
 }
-const Cube: React.FC<CubeProps> = (props) => {
-  const mesh = React.useRef<Mesh>();
+const Cube: React.FC<Pick<MeshBasicMaterialProps, 'color'> & CubeProps> = ({
+  posX,
+  color,
+}) => {
   return (
-    <mesh {...props} position={[props.posX, 0, 0]} ref={mesh}>
+    <mesh position-x={posX}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshBasicMaterial color={props.color} />
+      <meshBasicMaterial color={color} />
     </mesh>
   );
 };
 
-const Cubes: React.FC = (props) => {
+const Cubes: React.FC = () => {
   return (
-    <group
-      {...props}
-      position={[0, 1, 0]}
-      scale={[1, 2, 1]}
-      rotation={[0, 1, 0]}
-    >
+    <group position={[0, 1, 0]} scale={[1, 2, 1]} rotation={[0, 1, 0]}>
       <Cube posX={0} color={0xff0000} />
       <Cube posX={-2} color={0x00ff00} />
       <Cube posX={2} color={0x0000ff} />

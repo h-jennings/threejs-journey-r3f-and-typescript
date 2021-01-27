@@ -1,14 +1,10 @@
 import React, { Suspense } from 'react';
-import { Canvas, useResource, useFrame } from 'react-three-fiber';
-import { Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { Canvas, useResource, useFrame, MeshProps } from 'react-three-fiber';
+import { Mesh, MeshStandardMaterial } from 'three';
 import { OrbitControls, useCubeTexture } from '@react-three/drei';
 import { useTweaks } from 'use-tweaks';
 
-interface SharedMeshProps {
-  material: MeshStandardMaterial;
-  position?: Vector3 | [x: number, y: number, z: number] | undefined;
-}
-const SharedMesh: React.FC<SharedMeshProps> = ({
+const SharedMesh: React.FC<Pick<MeshProps, 'material' | 'position'>> = ({
   children,
   material,
   position,
@@ -43,7 +39,7 @@ const Shapes: React.FC = () => {
   const material = useResource<MeshStandardMaterial>();
   const envMap = useCubeTexture(
     ['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
-    { path: '/textures/environmentMaps/3/' },
+    { path: '/textures/environmentMaps/3/' }
   );
   const { metalness, roughness } = useTweaks('Material', {
     metalness: {
@@ -109,8 +105,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <ambientLight args={[0xffffff, ambientIntensity]} />
       <pointLight

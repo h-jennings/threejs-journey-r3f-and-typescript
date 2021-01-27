@@ -30,7 +30,7 @@ export const Walls: React.FC = () => {
     wallsRef
   );
   return (
-    <mesh ref={wallsRef} position-y={2.5 / 2}>
+    <mesh castShadow ref={wallsRef} position-y={2.5 / 2}>
       <boxBufferGeometry args={[4, 2.5, 4]} />
       <meshStandardMaterial
         map={bricksColorTexture}

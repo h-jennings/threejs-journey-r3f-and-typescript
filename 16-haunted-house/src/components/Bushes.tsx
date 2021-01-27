@@ -16,6 +16,7 @@ export const Bushes: React.FC = () => {
         return (
           <mesh
             key={idx}
+            castShadow
             scale={[scale, scale, scale]}
             position={[position[0], position[1], position[2]]}
           >

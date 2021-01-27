@@ -24,11 +24,11 @@ export const Floor: React.FC = () => {
     (self) => {
       self.geometry.setAttribute(
         'uv2',
-        new THREE.Float32BufferAttribute(self.geometry.attributes.uv.array, 2),
+        new THREE.Float32BufferAttribute(self.geometry.attributes.uv.array, 2)
       );
     },
     [],
-    floorRef,
+    floorRef
   );
 
   function setRepeatXY(texture: THREE.Texture | null): THREE.Texture | null {
@@ -51,7 +51,12 @@ export const Floor: React.FC = () => {
   }, []);
 
   return (
-    <mesh ref={floorRef} rotation-x={-Math.PI * 0.5} position-y={0}>
+    <mesh
+      ref={floorRef}
+      receiveShadow
+      rotation-x={-Math.PI * 0.5}
+      position-y={0}
+    >
       <planeBufferGeometry args={[20, 20]} />
       <meshStandardMaterial
         ref={grassMaterialRef}

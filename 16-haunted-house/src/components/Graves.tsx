@@ -3,7 +3,7 @@ export const Graves: React.FC = () => {
     <group>
       {Array(50)
         .fill(null)
-        .map(() => {
+        .map((_, idx) => {
           const angle = Math.random() * Math.PI * 2;
           const radius = 4 + Math.random() * 5;
           const x = Math.sin(angle) * radius;
@@ -11,6 +11,7 @@ export const Graves: React.FC = () => {
 
           return (
             <mesh
+              key={idx}
               castShadow
               position={[x, 0.3, z]}
               rotation-y={(Math.random() - 0.5) * 0.4}

@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
-import { Canvas } from 'react-three-fiber';
+import { Canvas, useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useTexture } from '@react-three/drei';
 
 const count = 5000;
 const positions = new Float32Array(count * 3);
@@ -13,23 +13,53 @@ for (let i = 0; i < count * 3; i++) {
 }
 
 const Particles: React.FC = () => {
+  const texture = useTexture('/textures/particles/2.png');
+  const particlesGeometry = React.useRef<THREE.BufferGeometry>();
+  const { clock } = useThree();
+
+  useFrame(() => {
+    if (particlesGeometry.current != null) {
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+
+        const x = particlesGeometry.current.attributes.position.array[i3];
+        // * Mutating the positions' Float32Array 'y' coordinate for every vertex
+        // @ts-ignore
+        particlesGeometry.current.attributes.position.array[i3 + 1] = Math.sin(
+          clock.elapsedTime + x
+        );
+      }
+      particlesGeometry.current.attributes.position.needsUpdate = true;
+    }
+  });
   return (
     <points>
-      <bufferGeometry>
+      <bufferGeometry ref={particlesGeometry}>
         <bufferAttribute
-          name="position"
-          attach="geometry"
+          attachObject={['attributes', 'position']}
           array={positions}
-          count={3}
+          count={positions.length / 3}
+          itemSize={3}
         />
         <bufferAttribute
-          name="color"
-          attach="geometry"
+          attachObject={['attributes', 'color']}
           array={colors}
-          count={3}
+          count={colors.length / 3}
+          itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial />
+      <pointsMaterial
+        args={[
+          {
+            size: 0.1,
+            sizeAttenuation: true,
+            transparent: true,
+            vertexColors: true,
+            depthWrite: false,
+            alphaMap: texture,
+          },
+        ]}
+      />
     </points>
   );
 };

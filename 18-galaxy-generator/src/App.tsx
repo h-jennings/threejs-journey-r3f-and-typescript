@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Canvas, useFrame, useThree } from 'react-three-fiber';
 import * as THREE from 'three';
-import { OrbitControls, useTexture } from '@react-three/drei';
+import { OrbitControls, useTexture, Stats } from '@react-three/drei';
 
 const count = 5000;
 const positions = new Float32Array(count * 3);
@@ -68,12 +68,8 @@ const App: React.FC = () => {
   return (
     <Canvas
       colorManagement={false}
-      shadowMap={{
-        enabled: false,
-        type: THREE.PCFSoftShadowMap,
-      }}
       camera={{
-        position: [0, 0, 2],
+        position: [3, 3, 3],
         fov: 75,
         near: 0.1,
         far: 100,
@@ -81,6 +77,7 @@ const App: React.FC = () => {
       pixelRatio={Math.min(window.devicePixelRatio, 2)}>
       <color attach='background' args={[0, 0, 0]} />
       <OrbitControls />
+      <Stats />
       <Suspense fallback={null}>
         <Particles />
       </Suspense>

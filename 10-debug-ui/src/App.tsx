@@ -39,7 +39,7 @@ const Cube: React.FC = () => {
       <a.meshBasicMaterial
         wireframe={wireframe}
         visible={visibility}
-        attach="material"
+        attach='material'
         color={c}
       />
     </a.mesh>
@@ -53,9 +53,8 @@ const App: React.FC = () => {
         position: [0, 0, 3],
         fov: 75,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}
-    >
-      <color attach="background" args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
+      <color attach='background' args={[0, 0, 0]} />
       <OrbitControls />
       <Cube />
     </Canvas>

@@ -1,70 +1,103 @@
 import React, { Suspense } from 'react';
-import { Canvas } from 'react-three-fiber';
+import { Canvas, useUpdate } from 'react-three-fiber';
 import * as THREE from 'three';
 import { OrbitControls, Stats } from '@react-three/drei';
+import { useTweaks } from 'use-tweaks';
 
 const Galaxy: React.FC = () => {
   const {
     count,
+    colorInside,
+    colorOutside,
     size,
     radius,
     branches,
     spin,
     randomnessPower,
-    insideColor,
-    outsideColor,
-  } = {
-    count: 100000,
-    size: 0.01,
-    radius: 5,
-    branches: 3,
-    spin: 1,
-    randomnessPower: 3,
-    insideColor: '#ff6030',
-    outsideColor: '#1b3984',
-  };
+  } = useTweaks('Galaxy', {
+    count: {
+      value: 100000,
+      min: 50000,
+      max: 200000,
+      step: 1000,
+    },
+    colorInside: '#ff6030',
+    colorOutside: '#1b3984',
+    size: {
+      value: 0.01,
+      min: 0.001,
+      max: 0.1,
+      step: 0.001,
+    },
+    radius: {
+      value: 5,
+      min: 0.01,
+      max: 20,
+      step: 0.001,
+    },
+    branches: {
+      value: 3,
+      min: 2,
+      max: 20,
+      step: 1,
+    },
+    spin: {
+      value: 1,
+      min: -5,
+      max: 5,
+      step: 0.001,
+    },
+    randomnessPower: {
+      value: 3,
+      min: 1,
+      max: 10,
+      step: 0.001,
+    },
+  });
 
-  const positions = React.useMemo(() => new Float32Array(count * 3), [count]);
-  const colors = React.useMemo(() => new Float32Array(count * 3), [count]);
-  const colorInside = React.useMemo(() => new THREE.Color(insideColor), [
-    insideColor,
-  ]);
-  const colorOutside = React.useMemo(() => new THREE.Color(outsideColor), [
-    outsideColor,
-  ]);
+  const pointGeometryRef = useUpdate<THREE.BufferGeometry>(
+    (self) => {
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
 
-  React.useEffect(() => {
-    for (let i = 0; i < count * 3; i++) {
-      const i3 = i * 3;
+      const colorI = new THREE.Color(colorInside);
+      const colorO = new THREE.Color(colorOutside);
 
-      // Positions
-      const rad = Math.random() * radius;
-      const spinAngle = rad * spin;
-      const branchAngle = ((i % branches) / branches) * Math.PI * 2;
-      const randomX =
-        Math.pow(Math.random(), randomnessPower) *
-        (Math.random() < 0.5 ? 1 : -1);
-      const randomY =
-        Math.pow(Math.random(), randomnessPower) *
-        (Math.random() < 0.5 ? 1 : -1);
-      const randomZ =
-        Math.pow(Math.random(), randomnessPower) *
-        (Math.random() < 0.5 ? 1 : -1);
+      for (let i = 0; i < count * 3; i++) {
+        const i3 = i * 3;
 
-      positions[i3] = Math.cos(branchAngle + spinAngle) * rad + randomX;
-      positions[i3 + 1] = randomY;
-      positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * rad + randomZ;
+        // Positions
+        const rad = Math.random() * radius;
+        const spinAngle = rad * spin;
+        const branchAngle = ((i % branches) / branches) * Math.PI * 2;
+        const randomX =
+          Math.pow(Math.random(), randomnessPower) *
+          (Math.random() < 0.5 ? 1 : -1);
+        const randomY =
+          Math.pow(Math.random(), randomnessPower) *
+          (Math.random() < 0.5 ? 1 : -1);
+        const randomZ =
+          Math.pow(Math.random(), randomnessPower) *
+          (Math.random() < 0.5 ? 1 : -1);
 
-      // Color
-      const mixedColor = colorInside.clone();
-      mixedColor.lerp(colorOutside, rad / radius);
+        positions[i3] = Math.cos(branchAngle + spinAngle) * rad + randomX;
+        positions[i3 + 1] = randomY;
+        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * rad + randomZ;
 
-      colors[i3] = mixedColor.r;
-      colors[i3 + 1] = mixedColor.g;
-      colors[i3 + 2] = mixedColor.b;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+        // Color
+        const mixedColor = colorI.clone();
+        mixedColor.lerp(colorO, rad / radius);
+
+        colors[i3] = mixedColor.r;
+        colors[i3 + 1] = mixedColor.g;
+        colors[i3 + 2] = mixedColor.b;
+      }
+
+      self.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      self.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    },
+    [count, colorInside, colorOutside, radius, branches, spin, randomnessPower]
+  );
 
   return (
     <points>
@@ -79,20 +112,7 @@ const Galaxy: React.FC = () => {
           },
         ]}
       />
-      <bufferGeometry>
-        <bufferAttribute
-          attachObject={['attributes', 'position']}
-          array={positions}
-          count={positions.length / 3}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attachObject={['attributes', 'color']}
-          array={colors}
-          count={colors.length / 3}
-          itemSize={3}
-        />
-      </bufferGeometry>
+      <bufferGeometry ref={pointGeometryRef} />
     </points>
   );
 };
@@ -107,8 +127,9 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
-      <color attach='background' args={[0, 0, 0]} />
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}
+    >
+      <color attach="background" args={[0, 0, 0]} />
       <OrbitControls />
       <Stats />
       <Suspense fallback={null}>

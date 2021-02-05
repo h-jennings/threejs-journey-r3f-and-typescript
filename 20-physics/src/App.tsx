@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
 import { Canvas } from 'react-three-fiber';
 import * as THREE from 'three';
-import { OrbitControls, Stats } from '@react-three/drei';
-import { Physics, usePlane, useSphere } from 'use-cannon';
+import { Stats, OrbitControls } from '@react-three/drei';
+import { Physics, usePlane, useSphere } from '@react-three/cannon';
 import { makeButton, useTweaks } from 'use-tweaks';
 
 const Plane: React.FC = (props) => {
@@ -14,7 +14,7 @@ const Plane: React.FC = (props) => {
   return (
     <mesh receiveShadow ref={ref}>
       <planeBufferGeometry args={[10, 10]} />
-      <meshStandardMaterial color="#777777" metalness={0.3} roughness={0.4} />
+      <meshStandardMaterial color='#777777' metalness={0.3} roughness={0.4} />
     </mesh>
   );
 };
@@ -72,8 +72,7 @@ const App: React.FC = () => {
         near: 0.1,
         far: 100,
       }}
-      pixelRatio={Math.min(window.devicePixelRatio, 2)}
-    >
+      pixelRatio={Math.min(window.devicePixelRatio, 2)}>
       <Physics
         defaultContactMaterial={{
           friction: 0.1,
@@ -81,8 +80,7 @@ const App: React.FC = () => {
         }}
         allowSleep
         gravity={[0, -30, 0]}
-        broadphase={'SAP'}
-      >
+        broadphase={'SAP'}>
         <OrbitControls />
         <Stats />
         <ambientLight args={['#ffffff', 0.7]} />
